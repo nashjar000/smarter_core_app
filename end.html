@@ -1,0 +1,35 @@
+
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Smarter Game - End</title>
+<link rel='stylesheet' href='style.css'><link rel="icon" href="favicon.ico"></head>
+<body>
+<div id="toast" class="toast"></div>
+<header>Game Over</header>
+<div class='container' id='end'>
+  <div class="question-card" style="max-width:720px;">
+    <h2 id="endline"></h2>
+    <div style="margin-top:.6rem;">
+      <a href='scoreboard.html' class='btn btn-primary'>Back to Scoreboard</a>
+      <button class='btn btn-secondary' onclick='nextTeam()'>Play Next Team</button>
+    </div>
+  </div>
+</div>
+<div class='host-controls'>
+  <button class="btn btn-secondary" data-page="splash.html" onclick="location.href='splash.html'">Start</button>
+  <button class="btn btn-secondary" data-page="index.html" onclick="location.href='index.html'">Home</button>
+  <button class="btn btn-secondary" data-page="board.html" onclick="location.href='board.html'">Board</button>
+  <button class="btn btn-next" onclick="nextTeam()">Next Team <span class="arrow">→</span></button>
+  <button class="btn btn-secondary" onclick="undo()">Undo</button>
+  <button class="btn btn-secondary" onclick="redo()">Redo</button>
+</div>
+<script>
+  const status = sessionStorage.getItem('endStatus')||'lose';
+  const st = localStorage.getItem('smarter5_pro_state_v3_5');
+  let name = 'This Team';
+  if(st){ try{ const obj=JSON.parse(st); if(obj.teams && obj.currentTeamIndex!=null){ name = obj.teams[obj.currentTeamIndex].name; } }catch(e){} }
+  const line = document.getElementById('endline');
+  if(status==='walk'){ line.textContent = `Hi, we're ${name} and we're walking away!`; }
+  else if(status==='win'){ line.textContent = `Hi, we're ${name} and we ARE smarter than a 5th grader!`; }
+  else { line.textContent = `Hi, we're ${name} and we're NOT smarter than a 5th grader.`; }
+</script>
+<script src='script.js'></script>
+</body></html>

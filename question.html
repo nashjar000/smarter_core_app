@@ -1,0 +1,42 @@
+
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Smarter Game - Question</title>
+<link rel='stylesheet' href='style.css'><link rel="icon" href="favicon.ico"></head>
+<body onload="renderQuestion()">
+<div id="toast" class="toast"></div>
+<header>Question</header>
+<div class='container'>
+  <div class="question-card">
+    <div class="subject" id="q-subject"></div>
+    <h2 id="q-text" style="margin:.6rem 0 0;"></h2>
+    <div id="q-answer" class="answer">Answer: </div>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" onclick="revealAnswer()">Reveal Answer (R)</button>
+    </div>
+    <div style="margin-top:.5rem;">
+      <button class="btn btn-ok" onclick="markAnswer(true)">Correct (Y)</button>
+      <button class="btn btn-danger" onclick="markAnswer(false)">Incorrect (N)</button>
+    </div>
+    <div class="q-cheats">
+      <div id="q-cheat-badges" class="q-cheat-badges"></div>
+      <div class="q-cheat-use">
+        <button id="qcheat-copy" class="btn btn-secondary" onclick="useCheatFromQ('copy')">Copy (C)</button>
+        <button id="qcheat-peek" class="btn btn-secondary" onclick="useCheatFromQ('peek')">Peek (P)</button>
+        <button id="qcheat-save" class="btn btn-secondary" onclick="useCheatFromQ('save')">Save (S)</button>
+      </div>
+    </div>
+    <div style="margin-top:.5rem;">
+      <button id="walk-here" class="btn btn-ghost" onclick="walkAwayHere()">Walk Away (before reveal)</button>
+    </div>
+    <p style="opacity:.8;margin-top:.6rem;">Shortcuts: R = Reveal, Y = Correct, N = Incorrect, C/P/S = Cheats, Esc = Back, Ctrl/Cmd+Z = Undo, Ctrl/Cmd+Y = Redo</p>
+  </div>
+</div>
+<div class='host-controls'>
+  <button class="btn btn-secondary" data-page="splash.html" onclick="location.href='splash.html'">Start</button>
+  <button class="btn btn-secondary" data-page="index.html" onclick="location.href='index.html'">Home</button>
+  <button class="btn btn-secondary" data-page="board.html" onclick="location.href='board.html'">Board</button>
+  <button class="btn btn-next" onclick="nextTeam()">Next Team <span class="arrow">→</span></button>
+  <button class="btn btn-secondary" onclick="undo()">Undo</button>
+  <button class="btn btn-secondary" onclick="redo()">Redo</button>
+</div>
+<script src='script.js'></script>
+</body></html>

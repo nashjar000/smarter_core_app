@@ -1,0 +1,35 @@
+
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Smarter Game - Board</title>
+<link rel='stylesheet' href='style.css'><link rel="icon" href="favicon.ico"></head>
+<body onload="renderBoard()">
+<div id="toast" class="toast"></div>
+<header>Team Board</header>
+<div class='container'>
+  <div class="team-title" id="teamNameHeader"></div>
+
+  <div class="board-top">
+    <div class="money-vert"><ul id="ladder"></ul></div>
+    <div id='grid' class='grid'></div>
+  </div>
+
+  <div class="cheats">
+    <button id="cheat-copy" class="btn btn-secondary" onclick="useCheat('copy')">Copy</button>
+    <button id="cheat-peek" class="btn btn-secondary" onclick="useCheat('peek')">Peek</button>
+    <button id="cheat-save" class="btn btn-secondary" onclick="useCheat('save')">Save</button>
+  </div>
+  <div style="margin-top:.5rem;">
+    <button id="btn-walk" class="btn btn-ghost" onclick="walkAwayBoard()">Walk Away</button>
+    <button id="btn-bonus" class="btn btn-primary" onclick="startBonus()">Play Bonus Question</button>
+    <a href='scoreboard.html' class='btn btn-secondary'>Back to Scoreboard</a>
+  </div>
+</div>
+<div class='host-controls'>
+  <button class="btn btn-secondary" data-page="splash.html" onclick="location.href='splash.html'">Start</button>
+  <button class="btn btn-secondary" data-page="index.html" onclick="location.href='index.html'">Home</button>
+  <button class="btn btn-secondary" data-page="board.html" onclick="location.href='board.html'">Board</button>
+  <button class="btn btn-next" onclick="nextTeam()">Next Team <span class="arrow">→</span></button>
+  <button class="btn btn-secondary" onclick="undo()">Undo</button>
+  <button class="btn btn-secondary" onclick="redo()">Redo</button>
+</div>
+<script src='script.js'></script>
+</body></html>
