@@ -397,7 +397,7 @@ let questionBank = {
   {grade:5,type:"short",q:"What is an idiom?",a:"A phrase with a meaning different from its literal words (e.g., 'It's raining cats and dogs')"},
   {grade:5,type:"short",q:"What type of sentence gives a command?",a:"Imperative sentence"},
   {grade:5,type:"mc",q:"Which of these is a proper noun?","choices":["city","dog","New York"],a:"New York"},
-  {grade:5,type:"short",q:"How many words should be capitalized: 'the statue of liberty is in new york'?",a:"3 (The, Statue, Liberty, New York)"},
+  {grade:5,type:"short",q:"How many words should be capitalized: 'the statue of liberty is in new york'?",a:"5 (The, Statue, Liberty, New York)"},
   {grade:5,type:"short",q:"What is the difference between a simile and a metaphor?",a:"Simile uses 'like' or 'as'; metaphor does not"}
 ],
 Geography: [
