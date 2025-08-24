@@ -22,7 +22,17 @@
     <button id="btn-bonus" class="btn btn-primary" onclick="startBonus()">Play Bonus Question</button>
     <a href='scoreboard.html' class='btn btn-secondary'>Back to Scoreboard</a>
   </div>
-</div>
+
+  <div id="subjectPicker" class="modal-backdrop" onclick="if(event.target.id==='subjectPicker') closeSubjectPicker();">
+    <div class="modal">
+      <h3>Select a subject</h3>
+      <div id="subjectButtons" class="subject-grid"></div>
+      <div class="close-row">
+        <button class="btn btn-secondary" onclick="closeSubjectPicker()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
 <div class='host-controls'>
   <button class="btn btn-secondary" data-page="splash.html" onclick="location.href='splash.html'">Start</button>
   <button class="btn btn-secondary" data-page="index.html" onclick="location.href='index.html'">Home</button>

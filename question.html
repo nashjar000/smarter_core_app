@@ -8,6 +8,7 @@
   <div class="question-card">
     <div class="subject" id="q-subject"></div>
     <h2 id="q-text" style="margin:.6rem 0 0;"></h2>
+    <div id="mc-choices" class="mc-choices"></div>
     <div id="q-answer" class="answer">Answer: </div>
     <div style="margin-top:1rem;">
       <button class="btn btn-primary" onclick="revealAnswer()">Reveal Answer (R)</button>
@@ -19,9 +20,9 @@
     <div class="q-cheats">
       <div id="q-cheat-badges" class="q-cheat-badges"></div>
       <div class="q-cheat-use">
-        <button id="qcheat-copy" class="btn btn-secondary" onclick="useCheatFromQ('copy')">Copy (C)</button>
-        <button id="qcheat-peek" class="btn btn-secondary" onclick="useCheatFromQ('peek')">Peek (P)</button>
-        <button id="qcheat-save" class="btn btn-secondary" onclick="useCheatFromQ('save')">Save (S)</button>
+        <button id="qcheat-copy" class="btn cheat" onclick="useCheatFromQ('copy')">Copy (C)</button>
+        <button id="qcheat-peek" class="btn cheat" onclick="useCheatFromQ('peek')">Peek (P)</button>
+        <button id="qcheat-save" class="btn cheat" onclick="useCheatFromQ('save')">Save (S)</button>
       </div>
     </div>
     <div style="margin-top:.5rem;">
