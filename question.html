@@ -4,6 +4,7 @@
 <body onload="renderQuestion()">
 <div id="toast" class="toast"></div>
 <header>Question</header>
+<div id="team-money" class="team-money" style="text-align:center; font-size:1.3rem; margin: 0.5rem 0 0.7rem;"></div>
 <div class='container'>
   <div class="question-card">
     <div class="subject" id="q-subject"></div>
@@ -31,6 +32,7 @@
     <p style="opacity:.8;margin-top:.6rem;">Shortcuts: R = Reveal, Y = Correct, N = Incorrect, C/P/S = Cheats, Esc = Back, Ctrl/Cmd+Z = Undo, Ctrl/Cmd+Y = Redo</p>
   </div>
 </div>
+<div class="team-score" style="text-align:center; margin: 1rem 0;"></div>
 <div class='host-controls'>
   <button class="btn btn-secondary" data-page="splash.html" onclick="location.href='splash.html'">Start</button>
   <button class="btn btn-secondary" data-page="index.html" onclick="location.href='index.html'">Home</button>
@@ -40,4 +42,22 @@
   <button class="btn btn-secondary" onclick="redo()">Redo</button>
 </div>
 <script src='script.js'></script>
+<script>
+// Show current team's money/score on question page
+function updateTeamMoney() {
+  if (typeof currentTeam !== 'function') return;
+  const t = currentTeam();
+  if (!t) return;
+  let moneyStr = typeof fmtMoney === 'function' ? fmtMoney(t.scoreIndex || 0) : ('$'+((t.scoreIndex||0).toLocaleString()));
+  document.getElementById('team-money').textContent = `${t.name || 'Team'}: ${moneyStr}`;
+}
+// Patch renderQuestion to also update money
+const origRenderQuestion = window.renderQuestion;
+window.renderQuestion = function() {
+  if (typeof origRenderQuestion === 'function') origRenderQuestion();
+  updateTeamMoney();
+}
+// Also update on load in case
+updateTeamMoney();
+</script>
 </body></html>

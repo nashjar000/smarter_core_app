@@ -92,16 +92,16 @@ let questionBank = {
   ],
   Science: [
   // ===== Grade 1 =====
-  {grade:1,type:"short",q:"What do plants need from the Sun to make food?",a:"Sunlight"},
-  {grade:1,type:"mc",q:"Which sense do you use to smell a flower?",choices:["Taste","Smell","Hearing"],a:"Smell"},
-  {grade:1,type:"tf",q:"True or False: The Sun is a star.",a:"True"},
-  {grade:1,type:"short",q:"What falls from the sky on a rainy day?",a:"Rain"},
-  {grade:1,type:"short",q:"What do we call baby cats?",a:"Kittens"},
-  {grade:1,type:"mc",q:"Which one lives in water and has gills?",choices:["Frog","Fish","Dog"],a:"Fish"},
-  {grade:1,type:"short",q:"What body part do you use to hear?",a:"Ears"},
-  {grade:1,type:"tf",q:"True or False: A tree’s roots grow underground.",a:"True"},
-  {grade:1,type:"mc",q:"Which is a season of the year?",choices:["Blue","Autumn","Circle"],a:"Autumn"},
-  {grade:1,type:"short",q:"What do bees make?",a:"Honey"},
+  // {grade:1,type:"short",q:"What do plants need from the Sun to make food?",a:"Sunlight"},
+  {grade:1,type:"mc",q:"Which sense do you use to sniff a flower?",choices:["Taste","Smell","Hearing"],a:"Smell"},
+  // {grade:1,type:"tf",q:"True or False: The Sun is a star.",a:"True"},
+  // {grade:1,type:"short",q:"What falls from the sky on a rainy day?",a:"Rain"},
+  // {grade:1,type:"short",q:"What do we call baby cats?",a:"Kittens"},
+  // {grade:1,type:"mc",q:"Which one lives in water and has gills?",choices:["Frog","Fish","Dog"],a:"Fish"},
+  // {grade:1,type:"short",q:"What body part do you use to hear?",a:"Ears"},
+  // {grade:1,type:"tf",q:"True or False: A tree’s roots grow underground.",a:"True"},
+  // {grade:1,type:"mc",q:"Which is a season of the year?",choices:["Blue","Autumn","Circle"],a:"Autumn"},
+  // {grade:1,type:"short",q:"What do bees make?",a:"Honey"},
 
   // ===== Grade 2 =====
   {grade:2,type:"short",q:"Animals that eat only meat are called what?",a:"Carnivores"},
@@ -237,7 +237,7 @@ let questionBank = {
   {grade:2,type:"mc",q:"Which is a percussion instrument?",choices:["Drum","Violin","Flute"],a:"Drum"},
   {grade:2,type:"short",q:"What is harmony?",a:"Two or more notes played together"},
   {grade:2,type:"short",q:"What is a duet?",a:"A performance by two people"},
-  {grade:2,type:"short",q:"What is the symbol that tells you how high or low to sing or play?",a:"A clef"},
+  {grade:2,type:"short",q:"What is the symbol at the beginning of the staff that tells you how high or low to sing or play?",a:"A clef"},
   {grade:2,type:"short",q:"What do you call a short piece of music?",a:"A tune"},
 
   // ===== Grade 3 =====
@@ -330,7 +330,7 @@ let questionBank = {
   {grade:5,type:"short",q:"What is pop art?",a:"Art based on popular culture"},
   {grade:5,type:"short",q:"Who painted 'The Persistence of Memory'?",a:"Salvador Dalí"},
   {grade:5,type:"short",q:"What does 'impressionism' focus on?",a:"Capturing light and momentary impressions"},
-  {grade:5,type:"short",q:"Who was Georgia O’Keeffe famous for painting?",a:"Flowers and nature scenes"},
+  {grade:5,type:"short",q:"What style of paintings was Georgia O’Keeffe famous for?",a:"Flowers and nature scenes"},
   {grade:5,type:"short",q:"What is a palette knife used for?",a:"Spreading paint"},
   {grade:5,type:"mc",q:"Which is an element of art?","choices":["Rhythm","Harmony","Color"],a:"Color"},
   {grade:5,type:"short",q:"Who was Frida Kahlo?",a:"A Mexican painter known for self-portraits"},
@@ -537,6 +537,13 @@ function renderTeams(){
 
 function renderScoreboard(){
   const wrap=document.getElementById('scoreboard'); if(!wrap) return; wrap.innerHTML='';
+  // Create a flex row container for teams
+  const row = document.createElement('div');
+  row.style.display = 'flex';
+  row.style.flexWrap = 'wrap';
+  row.style.justifyContent = 'center';
+  row.style.gap = '18px';
+
   (state.teams||[]).forEach((t,i)=>{
     const cheats=['copy','peek','save'].map(k=>`<span class="badge ${t.cheats[k]?'off':''}">${k}</span>`).join('');
     const disabled=t.finished?'disabled':'';
@@ -546,17 +553,27 @@ function renderScoreboard(){
       return `<li class="${filled} ${safe}"><span class="money-step"></span><span>$${amt.toLocaleString()}</span></li>`;
     }).join('');
     const card=document.createElement('div');
-    card.style.background='#0f8a50'; card.style.margin='12px auto'; card.style.padding='12px'; card.style.borderRadius='12px'; card.style.maxWidth='1000px';
+    card.style.background='#0f8a50';
+    card.style.margin='0';
+    card.style.padding='12px';
+    card.style.borderRadius='12px';
+    card.style.maxWidth='220px';
+    card.style.minWidth='200px';
+    card.style.flex = '1 1 220px';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.alignItems = 'center';
     if(t.won) card.classList.add('winner');
     card.innerHTML = `
-      <div class="team-title">${t.name} ${t.won?'<span class="trophy">🏆</span>':''} ${t.finished ? (t.walked?'(Walked)':'(Finished)') : ''}</div>
-      <div class="money-vert"><ul>${moneyLis}</ul></div>
+      <div class="team-title" style="font-size:1.2em; font-weight:bold; margin-bottom:8px;">${t.name} ${t.won?'<span class="trophy">🏆</span>':''} ${t.finished ? (t.walked?'(Walked)':'(Finished)') : ''}</div>
+      <div class="money-vert" style="width:100%;"><ul>${moneyLis}</ul></div>
       <div style="margin-top:.4rem;">${cheats}</div>
       <div style="margin-top:8px;">
         <button class="btn btn-primary" onclick="goTo('board.html', ${i})" ${disabled}>Play / Resume</button>
       </div>`;
-    wrap.appendChild(card);
+    row.appendChild(card);
   });
+  wrap.appendChild(row);
 }
 
 function renderBoard(){
@@ -598,8 +615,9 @@ function openQuestion(tileIndex){
   // If a subject is already attached to the tile, use it; otherwise invoke picker
   if(tile.subject){
     const qa=pickQuestion(t,tile.subject,tile.grade);
-    t.currentQ={ tileIndex, subject:tile.subject, grade:tile.grade, q:qa.q, a:qa.a, revealed:false, bonus:false };
-    saveState(); goTo('question.html');
+  t.currentQ={ tileIndex, subject:tile.subject, grade:tile.grade, q:qa.q, a:qa.a, revealed:false, bonus:false };
+  if (qa.choices) t.currentQ.choices = qa.choices;
+  saveState(); goTo('question.html');
   } else {
     openSubjectPicker(tileIndex);
   }
@@ -610,6 +628,7 @@ function startBonus(){
   const subject=subs[Math.floor(Math.random()*subs.length)] || 'Science';
   const qa=pickQuestion(t,subject,5);
   t.currentQ={ tileIndex:null, subject, grade:5, q:qa.q, a:qa.a, revealed:false, bonus:true };
+  if (qa.choices) t.currentQ.choices = qa.choices;
   saveState(); goTo('question.html');
 }
 function renderQuestion(){
@@ -771,6 +790,7 @@ function chooseSubject(subject){
   tile.subject = subject;
   const qa = pickQuestion(t, subject, tile.grade);
   t.currentQ = { tileIndex:_pendingTileIndex, subject, grade:tile.grade, q:qa.q, a:qa.a, revealed:false, bonus:false };
+  if (qa.choices) t.currentQ.choices = qa.choices;
   saveState();
   closeSubjectPicker();
   goTo('question.html');

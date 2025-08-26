@@ -27,7 +27,7 @@
   let name = 'This Team';
   if(st){ try{ const obj=JSON.parse(st); if(obj.teams && obj.currentTeamIndex!=null){ name = obj.teams[obj.currentTeamIndex].name; } }catch(e){} }
   const line = document.getElementById('endline');
-  if(status==='walk'){ line.textContent = `Hi, we're ${name} and we're walking away!`; }
+  if(status==='walk'){ line.textContent = `Hi, we're ${name} and we're NOT smarter than a 5th grader!`; }
   else if(status==='win'){ line.textContent = `Hi, we're ${name} and we ARE smarter than a 5th grader!`; }
   else { line.textContent = `Hi, we're ${name} and we're NOT smarter than a 5th grader.`; }
 </script>

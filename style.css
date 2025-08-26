@@ -20,6 +20,7 @@ header{ background:var(--panel); padding:1.2rem 1rem; text-align:center; font-fa
 .btn-ok{ background:var(--ok); color:#000; }
 .input{ padding:.6rem .8rem; border-radius:10px; border:none; width:min(520px,90%); font-size:1rem; }
 h1{ font-size:2.4rem; margin:0; font-family: 'Fredoka One',cursive;}
+p{font-family: 'Fredoka One',cursive;}
 
 .team-row{ margin:.5rem auto; max-width:760px; padding:.6rem; background:#0f8a50; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.25); }
 .team-row.winner{ box-shadow:0 0 0 3px rgba(245,176,0,.9), 0 0 24px rgba(245,176,0,.6) !important; }
@@ -105,10 +106,11 @@ body.show-controls .host-controls{ display:flex; }
 .mc-choices { margin-top: 1rem; display: none; }
 .mc-choices .choice {
   display: flex; align-items: center; gap: .5rem;
-  padding: .6rem .8rem; border: 2px solid #e5e7eb;
-  border-radius: .75rem; margin-bottom: .5rem; background: #fff; cursor: pointer;
+  padding: .6rem .8rem; border: 2px solid #0e7c45;
+  border-radius: .75rem; margin-bottom: .5rem; background: #0f8a50; color: #fff; cursor: pointer;
+  font-weight: 600;
 }
-.mc-choices .choice:hover { background: #f7fafc; }
+.mc-choices .choice:hover { background: rgba(14,124,69,0.65); }
 .mc-choices .choice input { transform: scale(1.2); }
 .mc-choices .letter { font-weight: 700; min-width: 1.4rem; text-align: center; }
 
