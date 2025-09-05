@@ -328,11 +328,11 @@ let questionBank = {
     {grade:2,q:"What is sculpture?",a:"Three-dimensional art"},
     {grade:2,q:"What do you call a drawing with only pencil shades?",a:"A sketch"},
     
-    // TODO: Finish looking through the rest of these questions 
+    // TODO: Finish looking through the rest of these questions: 
     // {grade:5,q:"",a:""},
     // ===== Grade 3 =====
     {grade:3,q:"Who painted the Mona Lisa?",a:"Leonardo da Vinci"},
-    {grade:3,q:"What is \"perspective\" in art?",a:"The illusion of depth"}, //! Change
+    {grade:3,q:"What two colors mixed together cerate purple?",a:"Red and blue"},
     {grade:3,q:"On the color wheel, what is the term for colors that are directly opposite each other?",a:"Complementary colors"},
     {grade:3,q:"What is the name for an artist who creates sculptures?",a:"A sculptor"},
     {grade:3,q:"Which famous artist painted the masterpiece known as 'Starry Night'?",a:"Vincent van Gogh"},
@@ -340,6 +340,7 @@ let questionBank = {
     {grade:3,q:"In art, what does the technique of shading help to show?",a:"Light and shadow"},
     {grade:3,q:"What is the term for a picture or pattern made by arranging many small pieces of colored material together?",a:"Mosaic"},
     {grade:3,q:"Which of the following is considered a warm color?",choices:["Blue","Red","Green"],a:"Red"},
+    {grade:3,q:"What are the secondary colors?",a:"Green, orange, purple"},
     {grade:3,q:"What is the term for an artist’s handwritten name on a painting?",a:"A signature"},
 
     // ===== Grade 4 =====
@@ -356,12 +357,9 @@ let questionBank = {
 
     // ===== Grade 5 =====
     {grade:5,q:"What is pop art?",a:"Art based on popular culture"},
-    {grade:5,q:"Who painted 'The Persistence of Memory'?",a:"Salvador Dalí"},
-    {grade:5,q:"What does 'impressionism' focus on?",a:"Capturing light and momentary impressions"},
     {grade:5,q:"What style of paintings was Georgia O’Keeffe famous for?",a:"Flowers and nature scenes"},
     {grade:5,q:"What is a palette knife used for?",a:"Spreading paint"},
     {grade:5,q:"Which is an element of art?",choices:["Rhythm","Harmony","Color"],a:"Color"},
-    {grade:5,q:"Who was Frida Kahlo?",a:"A Mexican painter known for self-portraits"},
     {grade:5,q:"What is surrealism?",a:"Dreamlike art movement"},
     {grade:5,q:"What is negative space in art?",a:"Empty space around objects"},
     {grade:5,q:"What is a fresco?",a:"Painting on wet plaster"}
@@ -377,9 +375,9 @@ let questionBank = {
     {grade:1,q:"Which of these words is spelled correctly?",choices:["kat","dog","hrose"],a:"b.) dog"},
     {grade:1,q:"What is the opposite of 'up'?",a:"Down"},
     {grade:1,q:"What sound does the 'ph' make in 'phone'?",a:"F"},
-    {grade:1,q:"How many letters need to be capitalized in this sentence: 'my cat theodore ran all the way to portland, oregon.'?",a:"4 (My, Theodore, Portland, Oregon)"},
-
+    
     // ===== Grade 2 =====
+    {grade:2,q:"How many letters need to be capitalized in this sentence: 'my cat theodore ran all the way to portland, oregon.'?",a:"4 (My, Theodore, Portland, Oregon)"},
     {grade:2,q:"What is the opposite of 'hot'?",a:"Cold"},
     {grade:2,q:"A noun is a…?",a:"A person, place, or thing"},
     {grade:2,q:"Which word needs to be capitalized? 'We went to london last summer.'",choices:["we","london","summer"],a:"b.) london"},
@@ -393,57 +391,44 @@ let questionBank = {
 
     // ===== Grade 3 =====
     {grade:3,q:"What is the past tense of 'run'?",a:"Ran"},
-    {grade:3,q:"What punctuation ends a question?",a:"Question mark"}, //! Change
-    {grade:3,q:"Which sentence is correct?",choices:["i went to the park.","I went to the park.","i Went To The Park."],a:"I went to the park."},
+    {grade:5,q:"Which word in this sentence is a proper noun? \"My dog, Ash, likes to eat cheese.\" ",a:"Ash"},
+    {grade:3,q:"Which sentence is correct?",choices:["i went to the park.","I went to the park.","i Went To The Park."],a:"b.) I went to the park."},
     {grade:3,q:"True or False: 'Because' is a conjunction.",a:"True"},
     {grade:3,q:"What is the plural of 'child'?",a:"Children"},
     {grade:3,q:"What is a synonym for 'happy'?",choices:["Sad","Angry","Joyful"],a:"C.) Joyful"},
     {grade:3,q:"How many words in this sentence should be capitalized: 'my dog is named rover'?",a:"2 (My, Rover)"},
     {grade:3,q:"What type of word is 'quickly'?",choices:["Adverb","Adjective","Noun"],a:"A.) Adverb"},
     {grade:3,q:"Which of these words are spelled correctly:",choices:["definately", "definitely", "defanitely"],a:"B.) Definitely"},
-    {grade:3,q:"What is the root word of 'teacher'?",a:"Teach"}, //! Change
+    {grade:3,q:"What is the root word of 'teacher'?",a:"Teach"}, 
 
     // ===== Grade 4 =====
     {grade:4,q:"Which word is a pronoun?",choices:["He","Dog","Run"],a:"A.) He"},
     {grade:4,q:"What is a homophone for 'pair'?",a:"Pear"},
-    {grade:4,q:"Which sentence uses correct punctuation?",choices:["Its going to rain.","It's going to rain.","Its' going to rain."],a:"B.) It's going to rain."},
+    {grade:4,q:"Which sentence uses correct punctuation?",choices:["Its going to rain.","It's going to rain.","Its' going to rain."],a:"b.) It's going to rain."},
     {grade:4,q:"True or False: A paragraph must have at least one sentence.",a:"True"},
     {grade:4,q:"What is a simile?",a:"A comparison using 'like' or 'as'"},
     {grade:4,q:"What is a metaphor?",a:"A comparison without using like or as"},
     {grade:4,q:"What is the plural of 'goose'?",a:"Geese"},
-    {grade:4,q:"Which of these is a complete sentence?",choices:["Because I was late.","When the bell rang.","I ate lunch."],a:"I ate lunch."},
+    {grade:4,q:"Which of these is a complete sentence?",choices:["Because I was late.","When the bell rang.","I ate lunch."],a:"c.) I ate lunch."},
     {grade:4,q:"Correct the misspelled word: 'seperate'.",a:"separate"}, 
     {grade:4,q:"What punctuation is used in contractions?",a:"Apostrophe ( ' )"},
 
     // ===== Grade 5 =====
     {grade:5,q:"What is a haiku?",a:"A poem with 5-7-5 syllables"},
-    {grade:5,q:"Which sentence is written in the past tense?",choices:["I will go to the store.","I am going to the store.","I went to the store."],a:"C.) I went to the store."},
+    {grade:5,q:"Which sentence is written in the past tense?",choices:["I will go to the store.","I am going to the store.","I went to the store."],a:"c.) I went to the store."},
     {grade:5,q:"Which word or words need to be capitalized: 'george washington was president.'?",a:"george, washington"},
     {grade:5,q:"What is the subject of the sentence: 'The dog chased the ball'?",a:"The dog"},
     {grade:5,q:"True or False: A preposition shows the relationship between two words.",a:"True"},
-    {grade:5,q: "Which of the following sentences is an idiom?",choices: ["She let the cat out of the bag.","The cat ran across the yard.","She opened the bag to look inside."],a: "A.) She let the cat out of the bag."},
+    {grade:5,q: "Which of the following sentences is an idiom?",choices: ["She let the cat out of the bag.","The cat ran across the yard.","She opened the bag to look inside."],a: "a.) She let the cat out of the bag."},
     {grade:5,q:"What type of sentence gives a command?",a:"Imperative sentence"},
     {grade:5,q:"Which of these is a proper noun?",choices:["city","dog","New York"],a:"New York"},
-    {grade:5,q:"How many words should be capitalized: 'the statue of liberty is in new york'?",a:"4 (The, Statue, Liberty, New York)"}, 
-    {grade:5,q:"What is the difference between a simile and a metaphor?",a:"Simile uses 'like' or 'as'; metaphor does not"}
+    {grade:5,q:"How many words should be capitalized: 'the statue of liberty is in new york'?",a:"5 (The, Statue, Liberty, New York)"}, 
   ],
   Geography: [
-    // ===== Grade 1 =====
-    {grade:1,q:"What country is directly north of the United States?",a:"Canada"},
-    {grade:1,q:"What ocean is on the East Coast of the United States?",a:"Atlantic Ocean"},
-    {grade:1,q:"Which one is a continent?",choices:["Texas","Europe","France"],a:"B.) Europe"},
-    {grade:1,q:"True or False: The equator is an imaginary line around the Earth.",a:"True"},
-    {grade:1,q:"What is the capital city of the United States?",a:"Washington, D.C."},
-    {grade:1,q:"Which direction does the Sun rise from?",a:"East"},
-    {grade:1,q:"Which of these is the largest?",choices:["City","Country","Continent"],a:"Continent"},
-    {grade:1,q:"Name one of the Great Lakes.",a:"Lake Superior"}, //! Change
-    {grade:1,q:"True or False: Africa is larger than Europe.",a:"True"},
-    {grade:1,q:"Which U.S. state is an island chain in the Pacific Ocean?",a:"Hawaii"},
-
     // ===== Grade 2 =====
     {grade:2,q:"What U.S. state is home to the Grand Canyon?",a:"Arizona"},
-    {grade:2,q:"What is the capital of Texas?",a:"Austin"},
-    {grade:2,q:"Which ocean is the largest?",choices:["Atlantic","Indian","Pacific"],a:"Pacific"},
+    {grade:2,q:"What is the capital of Washington?",a:"Olympia"},
+    {grade:2,q:"Which ocean is the largest?",choices:["Atlantic","Indian","Pacific"],a:"c.) Pacific"},
     {grade:2,q:"What mountain range runs along the eastern United States?",a:"Appalachian Mountains"},
     {grade:2,q:"True or False: Mount Everest is the tallest mountain on Earth.",a:"True"},
     {grade:2,q:"What U.S. state is shaped like a mitten?",a:"Michigan"},
@@ -451,18 +436,19 @@ let questionBank = {
     {grade:2,q:"What continent is Mexico in?",a:"North America"},
     {grade:2,q:"True or False: The Sahara Desert is in South America.",a:"False"},
     {grade:2,q:"What river flows through Egypt?",a:"The Nile"},
-
+    
     // ===== Grade 3 =====
     {grade:3,q:"What is the capital of California?",a:"Sacramento"},
-    {grade:3,q:"Which two countries share the world’s longest border?",choices:["U.S. & Mexico","U.S. & Canada","Russia & China"],a:"U.S. & Canada"},
+    {grade:3,q:"Which two countries share the world’s longest border?",choices:["U.S. & Mexico","U.S. & Canada","Russia & China"],a:"a.) U.S. & Canada"},
     {grade:3,q:"What continent is Brazil located on?",a:"South America"},
     {grade:3,q:"True or False: Antarctica has no permanent residents.",a:"True"},
     {grade:3,q:"Which U.S. state is the largest by area?",a:"Alaska"},
     {grade:3,q:"What is the capital of France?",a:"Paris"},
-    {grade:3,q:"Which line divides Earth into the Northern and Southern Hemispheres?",choices:["Prime Meridian","Equator","Tropic of Cancer"],a:"Equator"},
+    {grade:3,q:"Which line divides Earth into the Northern and Southern Hemispheres?",a:"b.) Equator"},
     {grade:3,q:"What desert covers much of northern Africa?",a:"The Sahara Desert"},
     {grade:3,q:"True or False: The Amazon River is longer than the Mississippi River.",a:"True"},
     {grade:3,q:"What is the smallest continent?",a:"Australia"},
+    {grade:3,q:"True or False: Africa is larger than Europe.",a:"True"},
 
     // ===== Grade 4 =====
     {grade:4,q:"Which U.S. river is the longest?",a:"Missouri River"},
@@ -478,15 +464,14 @@ let questionBank = {
 
     // ===== Grade 5 =====
     {grade:5,q:"What is the capital of Canada?",a:"Ottawa"},
-    {grade:5,q:"Which African country has Cairo as its capital?",choices:["Egypt","Nigeria","Kenya"],a:"Egypt"},
+    {grade:5,q:"Which African country has Cairo as its capital?",choices:["Egypt","Nigeria","Kenya"],a:"a.) Egypt"},
     {grade:5,q:"Which ocean is the Bermuda Triangle located in?",a:"Atlantic Ocean"},
     {grade:5,q:"What is the capital of Australia?",a:"Canberra"},
     {grade:5,q:"True or False: Mount Kilimanjaro is in Kenya.",a:"False (it’s in Tanzania)"},
-    {grade:5,q:"What is the largest desert in the world?",a:"Antarctic Desert"},
-    {grade:5,q:"Which country has both the Andes Mountains and the Amazon rainforest?",choices:["Brazil","Chile","Argentina"],a:"Brazil"},
+    {grade:5,q:"Which country has both the Andes Mountains and the Amazon rainforest?",choices:["Brazil","Chile","Argentina"],a:"a.) Brazil"},
     {grade:5,q:"What is the longest river in the world?",a:"The Nile (some argue Amazon)"},
     {grade:5,q:"Which line divides the Eastern and Western Hemispheres?",a:"Prime Meridian"},
-    {grade:5,q:"True or False: Greenland is considered part of North America.",a:"True"}
+    {grade:5,q:"True or False: Greenland is considered part of North America.",a:"True"},
   ],
 
   // ===== Grade 5 Only: Miscellaneous ===== 
@@ -495,13 +480,10 @@ let questionBank = {
     {grade:5,q:"Who was the first bishop in the Battle Ground 1st ward?",a:"Mitch Taylor"},
     {grade:5,q:"Who's the ward mission leader?",a:"Mitch Taylor"},
     {grade:5,q:"Who almost didn't have to give the opening prayer this last Sunday?",a:"Darlene Hamann"},
-    {grade:5,q:"What are the colored binders for the new hymns?",a:"Blue"},
+    {grade:5,q:"What color are the binders for the new hymns?",a:"Blue"},
     {grade:5,q:"What year did the Battle Ground church building flood?",a:"2021"},
     {grade:5,q:"What year was the Church of Jesus Christ of Latter-day Saints founded?",a:"1830"},
-    {grade:5,q:"What superbowl (year) did the fire alarm go off in this church building?",a:"2008"},
-    // {grade:5,q:"Which family has to ask a deacon to hand them the sacrament ~50% of the time?",a:"The Whallhoods"},
-    
-    // {grade:5,q:"",a:""},
+    {grade:5,q:"What superbowl (year) did the fire alarm go off in this church building?",a:"2008 (super bowl 42)"},
   ],
 };
 
