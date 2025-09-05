@@ -19,19 +19,8 @@
   </div>
   <div style="margin-top:.5rem;">
     <button id="btn-walk" class="btn btn-ghost" onclick="walkAwayBoard()">Walk Away</button>
-    <button id="btn-bonus" class="btn btn-primary" onclick="startBonus()" disabled style="background-color: #cccccc7b; color: #666; border-color: #ccc; cursor: not-allowed;">$1,000,000 Question</button>
-    <script>
-      // Enable the button when it can be clicked on
-      function enableBonusButton() {
-        const btn = document.getElementById('btn-bonus');
-        btn.disabled = false;
-        btn.style.backgroundColor = '';
-        btn.style.color = '';
-        btn.style.borderColor = '';
-        btn.style.cursor = '';
-      }
-      // Call enableBonusButton() when appropriate in your logic
-    </script>
+    <button id="btn-bonus" class="btn btn-bonus" onclick="startBonus()" disabled>$1,000,000 Question</button>
+
     <a href='scoreboard.html' class='btn btn-secondary'>Back to Scoreboard</a>
   </div>
 

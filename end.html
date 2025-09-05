@@ -27,9 +27,111 @@
   let name = 'This Team';
   if(st){ try{ const obj=JSON.parse(st); if(obj.teams && obj.currentTeamIndex!=null){ name = obj.teams[obj.currentTeamIndex].name; } }catch(e){} }
   const line = document.getElementById('endline');
-  if(status==='walk'){ line.textContent = `Hi, we're ${name} and we're NOT smarter than a 5th grader!`; }
-  else if(status==='win'){ line.textContent = `Hi, we're ${name} and we ARE smarter than a 5th grader!`; }
-  else { line.textContent = `Hi, we're ${name} and we're NOT smarter than a 5th grader.`; }
+  if(status==='walk'){ line.textContent = `Hi, we're ${name} and we're NOT smarter than a 5th grader!`; 
+    const img = document.createElement('img');
+    img.src = 'walk-away.jpg';
+    img.alt = 'Walk Away';
+    img.style.display = 'block';
+    img.style.margin = '1rem auto 0 auto';
+    line.parentNode.insertBefore(img, line.nextSibling);
+  }
+
+  else if(status==='win'){ 
+    line.textContent = `Hi, we're ${name} and we ARE smarter than a 5th grader!`
+    const img = document.createElement('img');
+    img.src = 'winningteam.gif';
+    img.alt = 'Winner';
+    img.style.display = 'block';
+    img.style.margin = '1rem auto 0 auto';
+    line.parentNode.insertBefore(img, line.nextSibling);
+
+    // Play theme song
+    const audio = document.createElement('audio');
+    audio.src = 'Are You Smarter than a 5th Grader_ - Main Theme (HQ).mp3'; // Make sure this file exists in your project
+    audio.autoplay = true;
+    audio.style.display = 'none';
+    document.body.appendChild(audio);
+
+    const confettiCanvas = document.createElement('canvas');
+    confettiCanvas.id = 'confetti-canvas';
+    confettiCanvas.style.position = 'fixed';
+    confettiCanvas.style.top = '0';
+    confettiCanvas.style.left = '0';
+    confettiCanvas.style.width = '100vw';
+    confettiCanvas.style.height = '100vh';
+    confettiCanvas.style.pointerEvents = 'none';
+    confettiCanvas.style.zIndex = '9999';
+    document.body.appendChild(confettiCanvas);
+
+    const ctx = confettiCanvas.getContext('2d');
+    let W = window.innerWidth, H = window.innerHeight;
+    confettiCanvas.width = W;
+    confettiCanvas.height = H;
+
+    window.addEventListener('resize', () => {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      confettiCanvas.width = W;
+      confettiCanvas.height = H;
+    });
+
+    const confettiCount = 180;
+    const confettiColors = ['#f44336','#e91e63','#9c27b0','#3f51b5','#2196f3','#4caf50','#ffeb3b','#ff9800'];
+    const confetti = [];
+
+    for(let i=0;i<confettiCount;i++){
+      confetti.push({
+        x: Math.random()*W,
+        y: Math.random()*-H,
+        r: Math.random()*6+4,
+        d: Math.random()*confettiCount,
+        color: confettiColors[Math.floor(Math.random()*confettiColors.length)],
+        tilt: Math.random()*10-10,
+        tiltAngleIncremental: (Math.random()*0.07)+.05,
+        tiltAngle: 0
+      });
+    }
+
+    function drawConfetti(){
+      ctx.clearRect(0,0,W,H);
+      confetti.forEach(c=>{
+        ctx.beginPath();
+        ctx.lineWidth = c.r;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r/3, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/5);
+        ctx.stroke();
+      });
+      updateConfetti();
+      requestAnimationFrame(drawConfetti);
+    }
+
+    function updateConfetti(){
+      confetti.forEach(c=>{
+        c.y += (Math.cos(c.d)+3+ c.r/2)/2;
+        c.x += Math.sin(0.01*c.d);
+        c.tiltAngle += c.tiltAngleIncremental;
+        c.tilt = Math.sin(c.tiltAngle- (c.d/3)) * 15;
+        if(c.y > H){
+          c.x = Math.random()*W;
+          c.y = -10;
+          c.tilt = Math.random()*10-10;
+        }
+      });
+    }
+
+    drawConfetti();
+    }
+  
+  else { 
+    line.textContent = `Hi, we're ${name} and we're NOT smarter than a 5th grader.`; 
+    const img = document.createElement('img');
+    img.src = 'fail.gif';
+    img.alt = 'Fail';
+    img.style.display = 'block';
+    img.style.margin = '1rem auto 0 auto';
+    line.parentNode.insertBefore(img, line.nextSibling);
+  }
 </script>
 <script src='script.js'></script>
 </body></html>

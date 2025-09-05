@@ -540,8 +540,13 @@ function renderTeams(){
   const list=document.getElementById('teams'); if(!list) return; list.innerHTML='';
   (state.teams||[]).forEach((t,i)=>{
     const row=document.createElement('div');
-    row.className='team-row'+(t.won?' winner':'');
-    const status = t.finished ? (t.walked?'(Walked)':'(Finished)') : '';
+    row.className='team-row'+(t.won?' winner':'(Winner!)');
+    let status = '';
+    if (t.finished) {
+      if (t.won) status = '(Winner!)';
+      else if (t.walked) status = '(Walked)';
+      else status = '(Lost)';
+    }
     row.innerHTML = `
       <div class="title">${t.name} ${t.won?'🏆':''} ${status}</div>
       <div class="meta">Bank: ${fmtMoney(t.scoreIndex)} &nbsp;|&nbsp; Cheats: 
@@ -589,11 +594,14 @@ function renderScoreboard(){
     card.style.alignItems = 'center';
     if(t.won) card.classList.add('winner');
     card.innerHTML = `
-      <div class="team-title" style="font-size:1.2em; font-weight:bold; margin-bottom:8px;">${t.name} ${t.won?'<span class="trophy">🏆</span>':''} ${t.finished ? (t.walked?'(Walked)':'(Finished)') : ''}</div>
+      <div class="team-title" style="font-size:1.2em; font-weight:bold; margin-bottom:8px;">
+      ${t.name} ${t.won?'<span class="trophy">🏆</span>':''} 
+      ${t.finished ? (t.won ? '(Winner!)' : (t.walked ? '(Walked)' : '(Lost)')) : ''}
+      </div>
       <div class="money-vert" style="width:100%;"><ul>${moneyLis}</ul></div>
       <div style="margin-top:.4rem;">${cheats}</div>
       <div style="margin-top:8px;">
-        <button class="btn btn-primary" onclick="goTo('board.html', ${i})" ${disabled}>Play / Resume</button>
+      <button class="btn btn-primary" onclick="goTo('board.html', ${i})" ${disabled}>Play / Resume</button>
       </div>`;
     row.appendChild(card);
   });
@@ -614,8 +622,9 @@ function renderBoard(){
   const moneyEl=document.getElementById('ladder'); moneyEl.innerHTML='';
   MONEY.forEach((amt,idx)=>{
     const li=document.createElement('li');
-    li.className = (idx<=t.scoreIndex?'filled ':'') + (SAFE_INDEXES.includes(idx)?'safe':'');
-    li.innerHTML = `<span class="money-step"></span><span>$${amt.toLocaleString()}</span>`;
+    let liClass = (idx<=t.scoreIndex?'filled ':'') + (SAFE_INDEXES.includes(idx)?'safe':'');
+    li.className = liClass;
+    li.innerHTML = `<span class=\"money-step\"></span><span>$${amt.toLocaleString()}</span>`;
     moneyEl.appendChild(li);
   });
   ['copy','peek','save'].forEach(k=>{
@@ -625,7 +634,10 @@ function renderBoard(){
   const bonusBtn=document.getElementById('btn-bonus');
   if(bonusBtn){
     const allUsed = t.tiles.every(x=>x.used);
-    bonusBtn.disabled = !(allUsed && !t.bonusDone && !t.finished);
+    const ready = allUsed && !t.bonusDone && !t.finished && t.scoreIndex === 10;
+    bonusBtn.disabled = !ready;
+    bonusBtn.classList.toggle('bonus-ready', ready);
+    bonusBtn.classList.toggle('glow', ready);
   }
   const wa=document.getElementById('btn-walk'); if(wa) wa.disabled=!!t.finished;
 }
@@ -659,7 +671,7 @@ function renderQuestion(){
   const t=currentTeam(); if(!t) return;
   const subj=document.getElementById('q-subject'); const txt=document.getElementById('q-text'); const ans=document.getElementById('q-answer');
   const walkBtn=document.getElementById('walk-here');
-  subj.textContent = `${t.currentQ.bonus?'BONUS — ':''}${t.currentQ.subject} — Grade ${t.currentQ.grade}`;
+  subj.textContent = `${t.currentQ.bonus?'$1,000,000 Question — ':''}${t.currentQ.subject} — Grade ${t.currentQ.grade}`;
   txt.textContent = t.currentQ.q;
   ans.textContent = 'Answer: ' + t.currentQ.a;
 

@@ -1,22 +1,18 @@
 
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Smarter Game - Home</title>
-<link rel='stylesheet' href='style.css'><link rel="icon" href="favicon.ico"></head>
-<body onload="renderTeams()">
-<div id="toast" class="toast"></div>
-<header>Are You Smarter Than a 5th Grader?</header>
-<div class='container'>
-  <input id='teamName' class="input" type='text' placeholder='Team Name (press Enter to add)'>
-  <button class='btn btn-primary' onclick="addTeam(document.getElementById('teamName').value);document.getElementById('teamName').value=''">Add Team</button>
-  <div style="margin-top:1rem;">
-    <a href='scoreboard.html' class='btn btn-secondary'>Go to Scoreboard</a>
-    <a href='splash.html' class='btn btn-secondary'>Back to Start</a>
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Smarter Game - Start</title>
+<link rel='stylesheet' href='style.css'><link rel="icon" href="favicon.ico">
+</head><body>
+<div class="splash-wrap">
+  <h1>Battle Ground 1st Ward's</h1>
+  <div class="splash-logo">
+    <!-- Replace this IMG with your official logo file (same name) -->
+    <img src="smarterLogo.png" alt="Game Logo">
   </div>
-  <div id='teams' style="margin-top:1rem;"></div>
-  <hr style="margin:1.2rem 0; opacity:.5;">
+  <p>*aka: "Are you dumber than a 60 year old." 😉 - Tom Hamann</p>
   <div>
-    <button class="btn btn-danger" onclick="resetAll()">Restart</button>
+    <a href="home.html" class="btn btn-primary">Start</a>
   </div>
-  <p style="opacity:.8;margin-top:1rem;">Shortcuts: Ctrl/Cmd+Z = Undo, Ctrl/Cmd+Y or Shift+Ctrl/Cmd+Z = Redo</p>
+  <!-- <div class="footer-note">Replace <b>logo_placeholder.png</b> with your official logo to brand the splash.</div> -->
 </div>
 <div class='host-controls'>
   <button class="btn btn-secondary" data-page="splash.html" onclick="location.href='splash.html'">Start</button>
@@ -26,5 +22,7 @@
   <button class="btn btn-secondary" onclick="undo()">Undo</button>
   <button class="btn btn-secondary" onclick="redo()">Redo</button>
 </div>
+<audio id="bg-music" src="Are You Smarter than a 5th Grader_ - Main Theme (HQ).mp3" autoplay loop></audio>
+<script src='expanded_questions.js'></script>
 <script src='script.js'></script>
 </body></html>

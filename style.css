@@ -114,3 +114,37 @@ body.show-controls .host-controls{ display:flex; }
 .mc-choices .choice input { transform: scale(1.2); }
 .mc-choices .letter { font-weight: 700; min-width: 1.4rem; text-align: center; }
 
+/* Base bonus button look */
+.btn-bonus {
+  background: #bcbcbc;
+  color: #666;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* When the $1M question is ready */
+.btn-bonus.bonus-ready {
+  background: #ffd943;        /* rich yellow */
+  color: #222;
+  border-color: #e8c430;
+  cursor: pointer;
+  box-shadow: 0 0 0px rgba(255,217,67,0.0);
+  transition: box-shadow 0.2s ease, transform 0.1s ease, background 0.2s ease;
+}
+
+/* Soft pulsing glow to draw attention */
+@keyframes bonusPulse {
+  0%   { box-shadow: 0 0 0px rgba(255,217,67,0.0); }
+  50%  { box-shadow: 0 0 18px rgba(255,217,67,0.55); }
+  100% { box-shadow: 0 0 0px rgba(255,217,67,0.0); }
+}
+
+.btn-bonus.bonus-ready.glow {
+  animation: bonusPulse 2.2s ease-in-out infinite;
+}
+
+/* Optional: a tiny press effect */
+.btn-bonus.bonus-ready:active {
+  transform: translateY(1px) scale(0.995);
+}
+
