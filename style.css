@@ -20,7 +20,7 @@ header{ background:var(--panel); padding:1.2rem 1rem; text-align:center; font-fa
 .btn-ok{ background:var(--ok); color:#000; }
 .input{ padding:.6rem .8rem; border-radius:10px; border:none; width:min(520px,90%); font-size:1rem; }
 h1{ font-size:2.4rem; margin:0; font-family: 'Fredoka One',cursive;}
-p{font-family: 'Fredoka One',cursive;}
+p{font-family: 'Fredoka One',cursive; font-size: 1.2rem;}
 
 .team-row{ margin:.5rem auto; max-width:760px; padding:.6rem; background:#0f8a50; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.25); }
 .team-row.winner{ box-shadow:0 0 0 3px rgba(245,176,0,.9), 0 0 24px rgba(245,176,0,.6) !important; }
