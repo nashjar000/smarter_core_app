@@ -473,9 +473,48 @@ let questionBank = {
     {grade:5,q:"Which line divides the Eastern and Western Hemispheres?",a:"Prime Meridian"},
     {grade:5,q:"True or False: Greenland is considered part of North America.",a:"True"},
   ],
+  Miscellaneous: [
+    // ===== Grade 1 =====
+    {grade:1,q:"Who in the ward wouldn't stop talking if there wasn't a time limit on talks?",a:"Neil Butler"},
+    {grade:1,q:"Who was the first bishop in the Battle Ground 1st ward?",a:"Mitch Taylor"},
+    {grade:1,q:"Who's the ward mission leader?",a:"Mitch Taylor"},
+    {grade:1,q:"Who almost didn't have to give the opening prayer this last Sunday?",a:"Darlene Hamann"},
+    {grade:1,q:"What color are the binders for the new hymns?",a:"Blue"},
+    {grade:1,q:"What year did the Battle Ground church building flood?",a:"2021"},
+    {grade:1,q:"What year was the Church of Jesus Christ of Latter-day Saints founded?",a:"1830"},
+    {grade:1,q:"What superbowl (year) did the fire alarm go off in this church building?",a:"2008 (super bowl 42)"},
 
-  // ===== Grade 5 Only: Miscellaneous ===== 
-  Miscellaneous: [ // Grade 5 only
+    // ===== Grade 2 =====
+    {grade:2,q:"Who in the ward wouldn't stop talking if there wasn't a time limit on talks?",a:"Neil Butler"},
+    {grade:2,q:"Who was the first bishop in the Battle Ground 1st ward?",a:"Mitch Taylor"},
+    {grade:2,q:"Who's the ward mission leader?",a:"Mitch Taylor"},
+    {grade:2,q:"Who almost didn't have to give the opening prayer this last Sunday?",a:"Darlene Hamann"},
+    {grade:2,q:"What color are the binders for the new hymns?",a:"Blue"},
+    {grade:2,q:"What year did the Battle Ground church building flood?",a:"2021"},
+    {grade:2,q:"What year was the Church of Jesus Christ of Latter-day Saints founded?",a:"1830"},
+    {grade:2,q:"What superbowl (year) did the fire alarm go off in this church building?",a:"2008 (super bowl 42)"},
+
+    // ===== Grade 3 =====
+    {grade:3,q:"Who in the ward wouldn't stop talking if there wasn't a time limit on talks?",a:"Neil Butler"},
+    {grade:3,q:"Who was the first bishop in the Battle Ground 1st ward?",a:"Mitch Taylor"},
+    {grade:3,q:"Who's the ward mission leader?",a:"Mitch Taylor"},
+    {grade:3,q:"Who almost didn't have to give the opening prayer this last Sunday?",a:"Darlene Hamann"},
+    {grade:3,q:"What color are the binders for the new hymns?",a:"Blue"},
+    {grade:3,q:"What year did the Battle Ground church building flood?",a:"2021"},
+    {grade:3,q:"What year was the Church of Jesus Christ of Latter-day Saints founded?",a:"1830"},
+    {grade:3,q:"What superbowl (year) did the fire alarm go off in this church building?",a:"2008 (super bowl 42)"},
+
+    // ===== Grade 4 =====
+    {grade:4,q:"Who in the ward wouldn't stop talking if there wasn't a time limit on talks?",a:"Neil Butler"},
+    {grade:4,q:"Who was the first bishop in the Battle Ground 1st ward?",a:"Mitch Taylor"},
+    {grade:4,q:"Who's the ward mission leader?",a:"Mitch Taylor"},
+    {grade:4,q:"Who almost didn't have to give the opening prayer this last Sunday?",a:"Darlene Hamann"},
+    {grade:4,q:"What color are the binders for the new hymns?",a:"Blue"},
+    {grade:4,q:"What year did the Battle Ground church building flood?",a:"2021"},
+    {grade:4,q:"What year was the Church of Jesus Christ of Latter-day Saints founded?",a:"1830"},
+    {grade:4,q:"What superbowl (year) did the fire alarm go off in this church building?",a:"2008 (super bowl 42)"},
+
+    // ===== Grade 5 =====
     {grade:5,q:"Who in the ward wouldn't stop talking if there wasn't a time limit on talks?",a:"Neil Butler"},
     {grade:5,q:"Who was the first bishop in the Battle Ground 1st ward?",a:"Mitch Taylor"},
     {grade:5,q:"Who's the ward mission leader?",a:"Mitch Taylor"},
@@ -514,21 +553,34 @@ function generateTiles(){
 
 // ===== Unique picker (global & per-team) =====
 function pickQuestion(team, subject, grade){
-  const pool=(questionBank[subject]||[]).filter(q=>q.grade===grade);
+  let pool = (questionBank[subject]||[]).filter(q=>q.grade===grade);
   if(!pool.length) return {q:'(No question found)', a:'(n/a)'};
-  const key=subject+'|'+grade;
+  let key = subject+'|'+grade;
+  let globalKey = key;
+  // For Miscellaneous, use a global key for all grades
+  if(subject === 'Miscellaneous') {
+    key = 'Miscellaneous|all';
+    globalKey = key;
+    // Pool is all Miscellaneous questions for any grade
+    pool = questionBank[subject]||[];
+  }
   if(!team.used[key]) team.used[key]=[];
   if(!state.globalUsed[key]) state.globalUsed[key]=[];
   let idx=-1, guard=0;
-  while(guard<200){
+  while(guard<400){
     const cand=Math.floor(Math.random()*pool.length);
-    if(!team.used[key].includes(cand) && !state.globalUsed[key].includes(cand)){ idx=cand; break; }
+    if(!team.used[key].includes(cand) && !state.globalUsed[key].includes(cand)) { idx=cand; break; }
     guard++;
   }
   if(idx===-1) idx=0;
   team.used[key].push(idx);
   state.globalUsed[key].push(idx);
   saveState(false);
+  // For Miscellaneous, return the question and set grade to the actual question's grade
+  if(subject === 'Miscellaneous') {
+    const q = pool[idx];
+    return { ...q };
+  }
   return pool[idx];
 }
 
