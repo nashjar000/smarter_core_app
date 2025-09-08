@@ -5,6 +5,21 @@
 <div id="toast" class="toast"></div>
 <header>Scoreboard</header>
 <div class='container' id='scoreboard'></div>
+<div id="score-edit-modal" class="modal-backdrop" style="display:none;align-items:center;justify-content:center;z-index:2000;">
+  <div class="modal" style="min-width:320px;text-align:center;">
+    <h3>Edit Team Score</h3>
+    <div id="score-edit-team" style="font-weight:bold;font-size:1.2em;margin-bottom:10px;"></div>
+    <div style="margin-bottom:12px;">
+      <button class="btn btn-secondary" onclick="changeScoreBy(-1)">-</button>
+      <span id="score-edit-value" style="font-size:1.3em;margin:0 18px;"></span>
+      <button class="btn btn-secondary" onclick="changeScoreBy(1)">+</button>
+    </div>
+    <div>
+      <button class="btn btn-primary" onclick="saveScoreEdit()">Save</button>
+      <button class="btn btn-secondary" onclick="closeScoreEdit()">Cancel</button>
+    </div>
+  </div>
+</div>
 <div class='host-controls'>
   <button class="btn btn-secondary" data-page="index.html" onclick="location.href='index.html'">Start</button>
   <button id="host-home-btn" class="btn btn-secondary" data-page="home.html" onclick="location.href='home.html'">Home</button>

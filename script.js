@@ -654,9 +654,38 @@ function renderScoreboard(){
       <div style="margin-top:.4rem;">${cheats}</div>
       <div style="margin-top:8px;">
       <button class="btn btn-primary" onclick="goTo('board.html', ${i})" ${disabled}>Play / Resume</button>
+      <button class="btn btn-secondary" onclick="openScoreEdit(${i})">Edit Score</button>
       </div>`;
     row.appendChild(card);
   });
+// ===== Score Edit Modal Logic (global, not inside renderScoreboard) =====
+let scoreEditIndex = null;
+let scoreEditValue = 0;
+window.openScoreEdit = function(idx) {
+  scoreEditIndex = idx;
+  const t = state.teams[idx];
+  scoreEditValue = t.scoreIndex;
+  document.getElementById('score-edit-team').textContent = t.name;
+  document.getElementById('score-edit-value').textContent = fmtMoney(scoreEditValue);
+  document.getElementById('score-edit-modal').style.display = 'flex';
+}
+window.closeScoreEdit = function() {
+  document.getElementById('score-edit-modal').style.display = 'none';
+  scoreEditIndex = null;
+}
+window.changeScoreBy = function(delta) {
+  if (scoreEditIndex == null) return;
+  scoreEditValue = Math.max(0, Math.min(MONEY.length-1, scoreEditValue + delta));
+  document.getElementById('score-edit-value').textContent = fmtMoney(scoreEditValue);
+}
+window.saveScoreEdit = function() {
+  if (scoreEditIndex == null) return;
+  state.teams[scoreEditIndex].scoreIndex = scoreEditValue;
+  saveState();
+  window.closeScoreEdit();
+  renderScoreboard();
+  showToast('Score updated!');
+}
   wrap.appendChild(row);
 }
 
