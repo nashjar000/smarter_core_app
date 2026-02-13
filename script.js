@@ -17,6 +17,7 @@ function saveState(push=true){
 function loadState(){
   try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) state=JSON.parse(raw);}catch(e){}
   loadStacks();
+  ensureTeamColors();
 }
 function undo(){ if(!undoStack.length) return; redoStack.push(clone(state)); state=undoStack.pop(); persistStacks(); localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); location.reload(); }
 function redo(){ if(!redoStack.length) return; undoStack.push(clone(state)); state=redoStack.pop(); persistStacks(); localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); location.reload(); }
@@ -26,6 +27,41 @@ loadState();
 const MONEY = [0,1000,2000,5000,10000,25000,50000,100000,175000,300000,500000,1000000];
 const SAFE_INDEXES = [1,5];
 const fmtMoney = idx => '$'+MONEY[idx].toLocaleString();
+
+// ===== Team colors =====
+const TEAM_COLOR_OPTIONS = [
+  { label: 'Default', value: '#0f8a50' },
+  { label: 'Gold', value: '#f5b000' },
+  { label: 'Blue', value: '#3498db' },
+  { label: 'Red', value: '#e74c3c' },
+  { label: 'Purple', value: '#9b59b6' },
+  { label: 'Teal', value: '#1abc9c' }
+];
+const DEFAULT_TEAM_COLOR = TEAM_COLOR_OPTIONS[0].value;
+
+function pickTeamColor(index){
+  return DEFAULT_TEAM_COLOR;
+}
+
+function getTextColor(bg){
+  if(!bg || bg[0] !== '#') return '#fff';
+  const r = parseInt(bg.slice(1,3), 16);
+  const g = parseInt(bg.slice(3,5), 16);
+  const b = parseInt(bg.slice(5,7), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.6 ? '#111' : '#fff';
+}
+
+function ensureTeamColors(){
+  let changed = false;
+  (state.teams||[]).forEach((t,i)=>{
+    if(!t.color){
+      t.color = pickTeamColor(i);
+      changed = true;
+    }
+  });
+  if(changed){ saveState(false); }
+}
 
 // ===== Expanded question bank (sample) =====
 let questionBank = {
@@ -527,14 +563,33 @@ let questionBank = {
 };
 
 // ===== Teams =====
-function makeTeam(name){
-  return { name, scoreIndex:0, questionIndex:0, cheats:{copy:false,peek:false,save:false},
+function makeTeam(name, color){
+  return { name, color, scoreIndex:0, questionIndex:0, cheats:{copy:false,peek:false,save:false},
     used:{}, tiles:generateTiles(), currentQ:null, finished:false, walked:false, bonusDone:false, won:false };
 }
-function addTeam(name){ if(!name?.trim()) return; if(!state.teams) state.teams=[]; state.teams.push(makeTeam(name.trim())); state.currentTeamIndex=state.teams.length-1; saveState(); renderTeams(); }
+function addTeam(name){
+  if(!name?.trim()) return;
+  if(!state.teams) state.teams=[];
+  const color = DEFAULT_TEAM_COLOR;
+  state.teams.push(makeTeam(name.trim(), color));
+  state.currentTeamIndex=state.teams.length-1;
+  saveState();
+  renderTeams();
+}
 function editTeam(i){ const t=state.teams[i]; if(!t) return; const nv=prompt("Rename team:",t.name); if(nv?.trim()){ t.name=nv.trim(); saveState(); renderTeams(); } }
-function clearTeam(i){ if(!confirm("Reset this team's progress?"))return; const t=state.teams[i]; if(!t)return; state.teams[i]=makeTeam(t.name); saveState(); renderTeams(); }
+function clearTeam(i){ if(!confirm("Reset this team's progress?"))return; const t=state.teams[i]; if(!t)return; state.teams[i]=makeTeam(t.name, t.color); saveState(); renderTeams(); }
 function deleteTeam(i){ if(!confirm("Delete this team?"))return; state.teams.splice(i,1); if(state.currentTeamIndex>=state.teams.length){ state.currentTeamIndex=state.teams.length-1; } saveState(); renderTeams(); }
+function setTeamColor(i, color){
+  const t = state.teams?.[i];
+  if(!t) return;
+  t.color = color;
+  saveState();
+  renderTeams();
+}
+function setTeamColorPreset(i, value){
+  if(value === 'custom') return;
+  setTeamColor(i, value);
+}
 function resetAll(){ if(!confirm("Restart the entire game? This will remove all teams and progress.")) return; state={teams:[],currentTeamIndex:null,globalUsed:{}}; undoStack=[]; redoStack=[]; persistStacks(); saveState(false); localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); location.reload(); }
 
 const gradeClass = g => g===1?'g1':g===2?'g2':g===3?'g3':g===4?'g4':'g5';
@@ -544,9 +599,29 @@ function nextTeam(){ if(!state.teams?.length) return; let start = state.currentT
 // ===== Tiles (G5→G1 so grade 1 appears at bottom). Two tiles per grade, NO pre-assigned subject. =====
 function generateTiles(){
   const tiles = [];
+  const randomMode = isRandomSubjectsEnabled();
+  
+  // Get all available subjects
+  const allSubjects = Object.keys(questionBank);
+  
   for (let g = 5; g >= 1; g--) {
-    tiles.push({ grade: g, used: false });
-    tiles.push({ grade: g, used: false });
+    for(let t = 0; t < 2; t++){
+      const tile = { grade: g, used: false };
+      
+      // If random subjects mode is on, assign a random subject to EVERY tile
+      if(randomMode){
+        // First try to find subjects with questions for this grade
+        const subjectsWithGrade = allSubjects.filter(s => (questionBank[s]||[]).some(q=>q.grade===g));
+        
+        // Use subjects with this grade, or fall back to all subjects
+        const availableSubjects = subjectsWithGrade.length > 0 ? subjectsWithGrade : allSubjects;
+        
+        if(availableSubjects.length){
+          tile.subject = availableSubjects[Math.floor(Math.random()*availableSubjects.length)];
+        }
+      }
+      tiles.push(tile);
+    }
   }
   return tiles;
 }
@@ -593,6 +668,11 @@ function renderTeams(){
   (state.teams||[]).forEach((t,i)=>{
     const row=document.createElement('div');
     row.className='team-row'+(t.won?' winner':'(Winner!)');
+    const rowColor = t.color || '#0f8a50';
+    const preset = TEAM_COLOR_OPTIONS.find(opt => opt.value === rowColor);
+    const selectValue = preset ? preset.value : 'custom';
+    row.style.background = rowColor;
+    row.style.color = getTextColor(rowColor);
     let status = '';
     if (t.finished) {
       if (t.won) status = '(Winner!)';
@@ -606,7 +686,15 @@ function renderTeams(){
         <span class="badge ${t.cheats.peek?'off':''}">peek</span>
         <span class="badge ${t.cheats.save?'off':''}">save</span>
       </div>
-      <div style="margin-top:.4rem;">
+      <div style="margin-top:.4rem; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;">
+        <label style="display:flex; align-items:center; gap:.4rem; font-size:.9rem;">
+          Color
+          <select onchange="setTeamColorPreset(${i}, this.value)" style="height:28px; border-radius:6px; border:none; padding:0 .4rem;">
+            ${TEAM_COLOR_OPTIONS.map(opt => `<option value="${opt.value}" ${opt.value === selectValue ? 'selected' : ''}>${opt.label}</option>`).join('')}
+            <option value="custom" ${selectValue === 'custom' ? 'selected' : ''}>Custom</option>
+          </select>
+        </label>
+        <input type="color" value="${rowColor}" onchange="setTeamColor(${i}, this.value)" aria-label="Custom team color" style="height:28px; width:32px; padding:0; border:none; background:transparent;" />
         <button class="btn btn-primary" onclick="goTo('scoreboard.html', ${i})">Open</button>
         <button class="btn btn-secondary" onclick="editTeam(${i})">Rename</button>
         <button class="btn btn-secondary" onclick="clearTeam(${i})">Reset</button>
@@ -634,7 +722,9 @@ function renderScoreboard(){
       return `<li class="${filled} ${safe}"><span class="money-step"></span><span>$${amt.toLocaleString()}</span></li>`;
     }).join('');
     const card=document.createElement('div');
-    card.style.background='#0f8a50';
+    const cardColor = t.color || '#0f8a50';
+    card.style.background = cardColor;
+    card.style.color = getTextColor(cardColor);
     card.style.margin='0';
     card.style.padding='12px';
     card.style.borderRadius='12px';
@@ -691,12 +781,33 @@ window.saveScoreEdit = function() {
 
 function renderBoard(){
   const t=currentTeam(); if(!t) return;
-  document.getElementById('teamNameHeader').innerText = t.name + (t.finished ? (t.walked?' (Walked)':' (Finished)') : '');
+  const teamHeader = document.getElementById('teamNameHeader');
+  teamHeader.innerText = t.name + (t.finished ? (t.walked?' (Walked)':' (Finished)') : '');
+  if(t.color){
+    teamHeader.style.color = t.color;
+    teamHeader.style.textShadow = '0 2px 6px rgba(0,0,0,0.35)';
+  }
+  
+  // Ensure all tiles have subjects assigned if random mode is on
+  if(isRandomSubjectsEnabled()){
+    t.tiles.forEach(tile => {
+      if(!tile.subject){
+        assignRandomSubjectToTile(tile);
+      }
+    });
+  }
+  
   const grid=document.getElementById('grid'); grid.innerHTML='';
   t.tiles.forEach((tile,idx)=>{
     const el=document.createElement('div');
     el.className='tile '+gradeClass(tile.grade)+(tile.used?' used':'');
-    el.innerHTML = `Grade ${tile.grade}`; // show ONLY the grade
+    // Show subject if random mode and subject is assigned, otherwise just show grade
+    if(isRandomSubjectsEnabled() && tile.subject){
+      const subjectDisplay = tile.subject.replace(/_/g, ' ');
+      el.innerHTML = `<div style="font-size:0.9rem;">Grade ${tile.grade}</div><div style="font-size:0.9rem;">${subjectDisplay}</div>`;
+    } else {
+      el.innerHTML = `Grade ${tile.grade}`;
+    }
     if(!tile.used && !t.finished){ el.onclick=()=>openSubjectPicker(idx); }
     grid.appendChild(el);
   });
@@ -748,11 +859,20 @@ function startBonus(){
   if (qa.choices) t.currentQ.choices = qa.choices;
   saveState(); goTo('question.html');
 }
+function updateTeamMoney(){
+  const t=currentTeam(); if(!t) return;
+  const moneyEl = document.getElementById('team-money');
+  if(!moneyEl) return;
+  let moneyStr = typeof fmtMoney === 'function' ? fmtMoney(t.scoreIndex || 0) : ('$'+((t.scoreIndex||0).toLocaleString()));
+  moneyEl.textContent = `${t.name || 'Team'}: ${moneyStr}`;
+}
+
 function renderQuestion(){
   const t=currentTeam(); if(!t) return;
   const subj=document.getElementById('q-subject'); const txt=document.getElementById('q-text'); const ans=document.getElementById('q-answer');
   const walkBtn=document.getElementById('walk-here');
-  subj.textContent = `${t.currentQ.bonus?'$1,000,000 Question — ':''}${t.currentQ.subject} — Grade ${t.currentQ.grade}`;
+  const subjectDisplay = t.currentQ.subject.replace(/_/g, ' ');
+  subj.textContent = `${t.currentQ.bonus?'$1,000,000 Question — ':''}${subjectDisplay} — Grade ${t.currentQ.grade}`;
   txt.textContent = t.currentQ.q;
   ans.textContent = 'Answer: ' + t.currentQ.a;
 
@@ -800,6 +920,7 @@ function renderQuestion(){
     if((e.ctrlKey||e.metaKey)&&e.key==='z'){ e.preventDefault(); undo(); }
     if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.shiftKey&&e.key==='Z'))){ e.preventDefault(); redo(); }
   };
+  updateTeamMoney();
 }
 function revealAnswer(){ const t=currentTeam(); if(!t) return; t.currentQ.revealed=true; answerRevealed=true; document.getElementById('q-answer').style.display='block'; playSound('reveal'); saveState(); }
 function markAnswer(correct){
@@ -831,6 +952,7 @@ function markAnswer(correct){
 function walkAwayHere(){ if(answerRevealed) return; const t=currentTeam(); if(!t) return; t.finished=true; t.walked=true; playSound('walk'); saveState(); sessionStorage.setItem('endStatus','walk'); goTo('end.html'); }
 function walkAwayBoard(){ const t=currentTeam(); if(!t) return; t.finished=true; t.walked=true; playSound('walk'); saveState(); sessionStorage.setItem('endStatus','walk'); goTo('end.html'); }
 
+
 // ===== Cheats =====
 function useCheat(type){
   const t=currentTeam(); if(!t||t.finished) return;
@@ -848,14 +970,38 @@ function useCheatFromQ(type){
   if(badgeRow){ const t=currentTeam(); badgeRow.innerHTML=['copy','peek','save'].map(k=>`<span class="badge ${t.cheats[k]?'off':''}">${k}</span>`).join(''); }
 }
 
-// ===== Host controls (hover reveal handled in CSS); active-page highlight =====
-document.addEventListener('mousemove', e=>{
-  if(window.innerHeight-e.clientY<50){ document.body.classList.add('show-controls'); }
-  else { document.body.classList.remove('show-controls'); }
+// ===== Host controls visibility: show only when cursor is near bottom =====
+document.addEventListener('mousemove', (e) => {
+  const controls = document.querySelector('.host-controls');
+  if(!controls) return;
+  
+  // Show controls if cursor is in bottom 80px of screen
+  const distFromBottom = window.innerHeight - e.clientY;
+  if(distFromBottom < 80){
+    controls.style.opacity = '1';
+    controls.style.pointerEvents = 'auto';
+  } else {
+    controls.style.opacity = '0';
+    controls.style.pointerEvents = 'none';
+  }
 });
+
+// Keep controls visible when hovering over them
+document.addEventListener('mouseenter', (e) => {
+  if(e.target.closest('.host-controls')){
+    const controls = document.querySelector('.host-controls');
+    if(controls){
+      controls.style.opacity = '1';
+      controls.style.pointerEvents = 'auto';
+    }
+  }
+}, true);
+
+// ===== Host controls (hover-based via CSS) =====
 (function(){
   function pageName(){ const p=(location.pathname.split('/').pop()||'index.html').toLowerCase(); return p||'index.html'; }
   function markActive(){ const current=pageName(); document.querySelectorAll('.host-controls [data-page]').forEach(btn=>{ const target=(btn.getAttribute('data-page')||'').toLowerCase(); if(target===current){ btn.classList.add('btn-active'); } else { btn.classList.remove('btn-active'); } }); }
+  markActive();
   window.addEventListener('DOMContentLoaded', markActive);
 })();
 
@@ -887,11 +1033,32 @@ function openSubjectPicker(tileIndex){
   const t=currentTeam(); if(!t || t.finished) return;
   _pendingTileIndex = tileIndex;
   const tile = t.tiles[tileIndex];
-  // List all subjects that have questions for this grade
   const subjects = Object.keys(questionBank).filter(s => (questionBank[s]||[]).some(q=>q.grade===tile.grade));
+  
+  // Update the grade/subject display at the bottom
+  const displayDiv = document.getElementById('currentGradeSubject');
+  if(displayDiv){
+    if(isRandomSubjectsEnabled() && tile.subject){
+      const subjectDisplay = tile.subject.replace(/_/g, ' ');
+      displayDiv.textContent = `Grade: ${tile.grade} | Subject: ${subjectDisplay}`;
+    } else {
+      displayDiv.textContent = `Grade: ${tile.grade} | Subject: --`;
+    }
+  }
+  
+  // If random mode and subject is already assigned, use it directly
+  if(isRandomSubjectsEnabled() && tile.subject && subjects.length){
+    chooseSubject(tile.subject);
+    return;
+  }
+  
+  // Otherwise show the subject picker
   const wrap = document.getElementById('subjectButtons');
   if(wrap){
-    wrap.innerHTML = subjects.map(s=>`<button class="btn btn-primary" onclick="chooseSubject('${s.replace(/'/g,"\\'")}')">${s}</button>`).join('');
+    wrap.innerHTML = subjects.map(s=>{
+      const displayName = s.replace(/_/g, ' ');
+      return `<button class="btn btn-primary" onclick="chooseSubject('${s.replace(/'/g,"\\'")}')">${displayName}</button>`;
+    }).join('');
   }
   const modal = document.getElementById('subjectPicker');
   if(modal){ modal.style.display='flex'; }
@@ -919,3 +1086,274 @@ document.addEventListener('keydown', (e)=>{
     if(modal && modal.style.display==='flex'){ e.preventDefault(); closeSubjectPicker(); }
   }
 });
+
+// ===== Custom Questions Upload & Management =====
+const CUSTOM_QUESTIONS_KEY = "smarter5_custom_questions_v1";
+const RANDOM_SUBJECTS_KEY = "smarter5_random_subjects_enabled";
+let pendingQuestionsToAdd = []; // Buffer for questions before submit
+
+function loadRandomSubjectsSetting(){
+  const btn = document.getElementById('randomSubjectsBtn');
+  if(btn){
+    const enabled = isRandomSubjectsEnabled();
+    btn.textContent = `🎲 Random Subjects: ${enabled ? 'ON' : 'OFF'}`;
+    btn.classList.toggle('btn-active', enabled);
+    btn.style.fontWeight = 'bold';
+  }
+}
+
+function assignRandomSubjectToTile(tile){
+  const allSubjects = Object.keys(questionBank);
+  const subjectsWithGrade = allSubjects.filter(s => (questionBank[s]||[]).some(q=>q.grade===tile.grade));
+  const availableSubjects = subjectsWithGrade.length > 0 ? subjectsWithGrade : allSubjects;
+  if(availableSubjects.length){
+    tile.subject = availableSubjects[Math.floor(Math.random()*availableSubjects.length)];
+  }
+}
+
+function toggleRandomSubjects(){
+  const currentState = isRandomSubjectsEnabled();
+  const newState = !currentState;
+  localStorage.setItem(RANDOM_SUBJECTS_KEY, newState ? 'true' : 'false');
+
+  const btn = document.getElementById('randomSubjectsBtn');
+  if(btn){
+    btn.textContent = `🎲 Random Subjects: ${newState ? 'ON' : 'OFF'}`;
+    btn.classList.toggle('btn-active', newState);
+  }
+
+  updateSettingsStatus();
+  // Reload to regenerate tiles with or without subjects
+  setTimeout(() => location.reload(), 300);
+}
+
+function isRandomSubjectsEnabled(){
+  return localStorage.getItem(RANDOM_SUBJECTS_KEY) === 'true';
+}
+
+function updateSettingsStatus(){
+  const statusDiv = document.getElementById('settingsStatus');
+  if(!statusDiv) return;
+  
+  const randomEnabled = isRandomSubjectsEnabled();
+  let customCount = 0;
+  try {
+    const customQ = JSON.parse(localStorage.getItem(CUSTOM_QUESTIONS_KEY) || '{}');
+    Object.keys(customQ).forEach(subject => {
+      customCount += (customQ[subject]||[]).length;
+    });
+  } catch(e){}
+  
+  const randomStatus = randomEnabled ? '✓ Random Subjects: ON' : '○ Random Subjects: OFF';
+  const customStatus = customCount > 0 ? `✓ ${customCount} Custom Question${customCount !== 1 ? 's' : ''} Loaded` : '○ No Custom Questions';
+  
+  statusDiv.innerHTML = `<div style="display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap; font-size:0.95rem;">
+    <div style="cursor:pointer; padding:0.4rem 0.8rem; border-radius:4px; transition:all 0.2s; ${randomEnabled ? 'background:rgba(255,255,255,0.1);' : ''}" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='${randomEnabled ? 'rgba(255,255,255,0.1)' : ''}'">${randomStatus} <span style="opacity:0.6; font-size:0.85rem;">(click to toggle)</span></div>
+    <div>${customStatus}</div>
+  </div>`;
+}
+
+function loadCustomQuestions(){
+  try {
+    const stored = localStorage.getItem(CUSTOM_QUESTIONS_KEY);
+    if(stored){
+      const customQ = JSON.parse(stored);
+      Object.keys(customQ).forEach(subject => {
+        if(!questionBank[subject]){
+          questionBank[subject] = [];
+        }
+        questionBank[subject] = questionBank[subject].concat(customQ[subject]);
+      });
+    }
+  } catch(e){
+    console.error('Error loading custom questions:', e);
+  }
+}
+
+// New: Add one question to preview
+function addOneQuestion(){
+  const subject = document.getElementById('customSubject')?.value?.trim();
+  const grade = document.getElementById('customGrade')?.value?.trim();
+  const question = document.getElementById('customQuestion')?.value?.trim();
+  const answer = document.getElementById('customAnswer')?.value?.trim();
+  
+  if(!subject || !grade || !question || !answer){
+    showStatus(document.getElementById('customQuestionsStatus'), 'Please fill all fields.', 'error');
+    return;
+  }
+  
+  pendingQuestionsToAdd.push({ subject, grade: parseInt(grade), question, answer });
+  updateQuestionsPreview();
+  clearQuestionAnswerOnly();
+  showStatus(document.getElementById('customQuestionsStatus'), `✓ ${pendingQuestionsToAdd.length} question${pendingQuestionsToAdd.length !== 1 ? 's' : ''} queued. Add more or click "Save All Questions"!`, 'success');
+  setTimeout(() => {
+    const status = document.getElementById('customQuestionsStatus');
+    if(status) status.style.display = 'none';
+  }, 3000);
+}
+
+function clearQuestionAnswerOnly(){
+  document.getElementById('customQuestion').value = '';
+  document.getElementById('customAnswer').value = '';
+  document.getElementById('customQuestion').focus();
+}
+
+function updateQuestionsPreview(){
+  const preview = document.getElementById('questionsPreview');
+  const list = document.getElementById('questionsList');
+  const count = document.getElementById('previewCount');
+  
+  if(!preview || !list) return;
+  
+  if(pendingQuestionsToAdd.length === 0){
+    preview.style.display = 'none';
+    return;
+  }
+  
+  count.textContent = pendingQuestionsToAdd.length;
+  list.innerHTML = pendingQuestionsToAdd.map((q, i) => `
+    <div style="padding:0.6rem; background:white; border-radius:4px; margin-bottom:0.6rem; display:flex; justify-content:space-between; align-items:start;">
+      <div style="flex:1;">
+        <div style="font-weight:bold; color:#0f8a50;">${q.subject} — Grade ${q.grade}</div>
+        <div style="font-size:0.9rem; margin-top:0.3rem;"><strong>Q:</strong> ${q.question}</div>
+        <div style="font-size:0.9rem; margin-top:0.2rem;"><strong>A:</strong> ${q.answer}</div>
+      </div>
+      <button class="btn btn-sm" onclick="removeQuestionFromPreview(${i})" style="padding:0.4rem 0.8rem; margin-left:0.8rem;">×</button>
+    </div>
+  `).join('');
+  
+  preview.style.display = 'block';
+}
+
+function removeQuestionFromPreview(idx){
+  pendingQuestionsToAdd.splice(idx, 1);
+  updateQuestionsPreview();
+}
+
+function clearQuestionForm(){
+  document.getElementById('customSubject').value = '';
+  document.getElementById('customGrade').value = '';
+  document.getElementById('customQuestion').value = '';
+  document.getElementById('customAnswer').value = '';
+  document.getElementById('customSubject').focus();
+}
+
+function clearAllQuestions(){
+  if(confirm('Clear all pending questions?')){
+    pendingQuestionsToAdd = [];
+    updateQuestionsPreview();
+    document.getElementById('customSubject').focus();
+  }
+}
+
+function submitAllQuestions(){
+  if(pendingQuestionsToAdd.length === 0){
+    showStatus(document.getElementById('customQuestionsStatus'), 'No questions to add.', 'error');
+    return;
+  }
+  
+  const customBank = {};
+  pendingQuestionsToAdd.forEach(q => {
+    if(!customBank[q.subject]){
+      customBank[q.subject] = [];
+    }
+    customBank[q.subject].push({ grade: q.grade, q: q.question, a: q.answer });
+  });
+  
+  try {
+    const existing = JSON.parse(localStorage.getItem(CUSTOM_QUESTIONS_KEY) || '{}');
+    Object.keys(customBank).forEach(subject => {
+      if(!existing[subject]) existing[subject] = [];
+      existing[subject] = existing[subject].concat(customBank[subject]);
+    });
+    localStorage.setItem(CUSTOM_QUESTIONS_KEY, JSON.stringify(existing));
+    const count = pendingQuestionsToAdd.length;
+    pendingQuestionsToAdd = [];
+    updateQuestionsPreview();
+    updateSettingsStatus();
+    showStatus(document.getElementById('customQuestionsStatus'), `✓ Added ${count} question${count !== 1 ? 's' : ''}!`, 'success');
+    setTimeout(() => location.reload(), 1500);
+  } catch(err){
+    showStatus(document.getElementById('customQuestionsStatus'), 'Error saving: ' + err.message, 'error');
+  }
+}
+
+function clearCustomQuestions(){
+  if(confirm('Are you sure you want to delete all custom questions?')){
+    localStorage.removeItem(CUSTOM_QUESTIONS_KEY);
+    updateSettingsStatus();
+    const statusDiv = document.getElementById('customQuestionsStatus');
+    if(statusDiv){
+      showStatus(statusDiv, '✓ Custom questions cleared.', 'success');
+    }
+    setTimeout(() => location.reload(), 1500);
+  }
+}
+
+function showStatus(statusDiv, message, type){
+  if(!statusDiv) return;
+  statusDiv.style.display = 'block';
+  statusDiv.textContent = message;
+  statusDiv.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
+  statusDiv.style.color = type === 'success' ? '#155724' : '#721c24';
+  statusDiv.style.border = `1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'}`;
+}
+
+// ===== Fullscreen API toggle =====
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(err => {
+      console.log('Fullscreen request failed:', err);
+    });
+  } else {
+    document.exitFullscreen().catch(err => {
+      console.log('Exit fullscreen failed:', err);
+    });
+  }
+}
+
+// Load custom questions and settings on script init
+loadCustomQuestions();
+
+// Initialize random subjects button - runs immediately and on any page load
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', () => {
+    loadRandomSubjectsSetting();
+    updateSettingsStatus();
+  });
+} else {
+  loadRandomSubjectsSetting();
+  updateSettingsStatus();
+}
+
+// Also update after a short delay in case DOM wasn't ready
+setTimeout(() => {
+  loadRandomSubjectsSetting();
+  updateSettingsStatus();
+}, 100);
+loadCustomQuestions();
+
+// Initialize random subjects button - runs immediately and on any page load
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', () => {
+    loadRandomSubjectsSetting();
+    updateSettingsStatus();
+    restoreFullscreen();
+  });
+} else {
+  loadRandomSubjectsSetting();
+  updateSettingsStatus();
+  restoreFullscreen();
+}
+
+// Also update after a short delay in case DOM wasn't ready
+setTimeout(() => {
+  loadRandomSubjectsSetting();
+  updateSettingsStatus();
+  handleFullscreenRestore();
+}, 100);
+
+// Extra restore check with longer delay
+setTimeout(() => {
+  handleFullscreenRestore();
+}, 400);

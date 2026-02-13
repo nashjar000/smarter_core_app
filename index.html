@@ -18,18 +18,21 @@
   <button class="btn btn-secondary" data-page="index.html" onclick="location.href='index.html'">Start</button>
   <button id="host-home-btn" class="btn btn-secondary" data-page="home.html" onclick="location.href='home.html'">Home</button>
   <button class="btn btn-secondary" data-page="scoreboard.html" onclick="location.href='scoreboard.html'">Go to Scoreboard</button>
-  <button class="btn btn-next" onclick="nextTeam()">Next Team <span class="arrow">→</span></button>
-  <button class="btn btn-secondary" onclick="undo()">Undo</button>
-  <button class="btn btn-secondary" onclick="redo()">Redo</button>
+  <button id="randomSubjectsBtn" class="btn btn-secondary" onclick="try{toggleRandomSubjects();}catch(e){console.log('toggleRandomSubjects error:',e)}" title="Toggle random subjects mode">🎲 Random Subjects: OFF</button>
+  <button class="btn btn-next" onclick="try{nextTeam();}catch(e){}">Next Team <span class="arrow">→</span></button>
+  <button class="btn btn-secondary" onclick="try{toggleFullscreen();}catch(e){}" title="Toggle fullscreen (hides browser tabs)">⛶ Fullscreen</button>
+  <button class="btn btn-secondary" onclick="try{undo();}catch(e){}">Undo</button>
+  <button class="btn btn-secondary" onclick="try{redo();}catch(e){}">Redo</button>
 </div>
+<script src='expanded_questions.js'></script>
+<script src='script.js'></script>
 <script>
 // Highlight Home button if on home.html
 if (window.location.pathname.endsWith('home.html')) {
   var homeBtn = document.getElementById('host-home-btn');
   if (homeBtn) homeBtn.classList.add('btn-active');
 }
+setTimeout(() => { try{ loadRandomSubjectsSetting(); }catch(e){} }, 50);
 </script>
 <audio id="bg-music" src="Are You Smarter than a 5th Grader_ - Main Theme (HQ).mp3" autoplay loop></audio>
-<script src='expanded_questions.js'></script>
-<script src='script.js'></script>
 </body></html>
